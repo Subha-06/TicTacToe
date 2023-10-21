@@ -35,7 +35,8 @@ def playGame():
         handleTurns(currentPlayer)
         
         checkGameOver()
-        
+        if winner:
+            break
         changePlayer()
         
     if winner == "X" or winner == "O":
@@ -46,14 +47,19 @@ def playGame():
         
     
 def handleTurns(currentPlayer):
-    position = input("Player " + currentPlayer + "\n" +
-                      "Choose a position from 1-9: " + "\n")
+    while True:
+        position = input("Player " + currentPlayer + "\n" +
+                         "Choose a position from 1-9: " + "\n")
+        if position.isdigit() and 1 <= int(position) <= 9:
+            position = int(position) - 1
 
-    position = int(position) - 1
-    
+            if board[position] == "_":
+                break
+            else:
+                print("Position already taken. Choose another position.")
+
     # Update the board
-    board[position] = currentPlayer     
-    
+    board[position] = currentPlayer
     displayBoard()
     
 def checkGameOver():
@@ -65,26 +71,48 @@ def checkGameOver():
     
 def checkWin():
     
-    global winner
-    
-    #check rows
-    #check columns
-    #check diagonal
+    checkRows()
+    checkColumns()
+    checkDiagonals()
     
     return
+
+def checkRows():
+    
+    global winner
+    for i in range(0, 7, 3):
+        if board[i] == board[i + 1] == board[i + 2] != "_":
+            winner = board[i]
+            return
+        
+def checkColumns():
+    global winner
+    for i in range(3):
+        if board[i] == board[i + 3] == board[i + 6] != "_":
+            winner = board[i]
+            return
+        
+def checkDiagonals():
+    global winner
+    if board[0] == board[4] == board[8] != "_":
+        winner = board[0]
+    elif board[2] == board[4] == board[6] != "_":
+        winner = board[2]
+    
+    
     
 def checkTie():
-    return
+    global gameContinues
+    if "_" not in board and not winner:
+        gameContinues = False
     
 
 def changePlayer(): 
-    return
-
-
-    
-
-
-
+    global currentPlayer
+    if currentPlayer == "X":
+        currentPlayer = "O"
+    else:
+        currentPlayer = "X"
 
   
 playGame()   
